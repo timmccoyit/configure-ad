@@ -86,3 +86,39 @@ First we'll login to the client vm as the original local admin and join it to th
 First off we will be logging into client vm as jane_admin and opening system properties > Remote Desktop > allow domain users access to remote desktop and now I can log into client vm as a normal non admin user. Keep in mind that this would normally be done with Group policy to affect a many systems at once but for the purpose of simple easily digestable demonstration im doing it this way. With this step being done this will allow ALL domain users to be able to login to client-1. For the final part of this section we'll log back in to DC-1 as jane_admin and open powershell_Ise as an admin. We're going to be creating a new file and pasting a script created to randomly generate a specific amount of users(100 in our case) to be sent into the employees OU. This will allow us to pick any user that was generated and login to client-1 vm with the acocunt. Observe the users that were added and log in to who ever you want!  
 </p>
 <br />
+
+<h2>Dealing with account lockouts</h2>
+
+![image](https://github.com/user-attachments/assets/b3465b78-a95a-4261-a737-809145f8a206)
+![image](https://github.com/user-attachments/assets/095c1469-5a46-4373-8a3a-f6d0fe49c1d6)
+![image](https://github.com/user-attachments/assets/69836024-9636-4444-843d-3fd50fa99e95)
+![image](https://github.com/user-attachments/assets/51a26439-a526-4825-b1ed-77e2cc8b0ef0)
+![image](https://github.com/user-attachments/assets/91cdd5db-ae2c-4380-838a-3cfce471cb83)
+![image](https://github.com/user-attachments/assets/5f4923fd-4405-4bd3-9e2f-90783f55f4e2)
+![image](https://github.com/user-attachments/assets/f60a7efd-2b39-41f8-900b-034d5238de7e)
+
+
+<p>
+The first we must complete for the account lockouts to function is open the Group Policy Management Console(GPMC) to create a policy that locks users out of their accounts after a certain amount of failed login attempts. Open the Group policy managment editor and go to computer config > policies > windows settings > security settings > account lockout policy then configure account lockout settings. It will recommend you settings depending on the lockout duration you pick but keep in mind you can still change it. Once this is changed, you COULD wait until the policy changes on its own but we're going to login to jane admin and run a command that forces a group policy update to save time(gpupdate /force). Running gpresult /r as an admin will show those group policy update results and when the group policy was last updated. After trying to log into the user we last used and failing the password attempts you should be locked out of your account. Active directory should show that this user has been locked out of their account, simply check the unlock account field and you should be able to login as that user again with the correct password. To reset password simple right click that user and go to reset password and choose which options apply for the situation. 
+</p>
+<br />
+
+<h2>Enabling and Disabling Accounts</h2>
+
+![image](https://github.com/user-attachments/assets/e8828a35-b5fd-4e78-9b6e-007ce8068f3e)
+![image](https://github.com/user-attachments/assets/2e06197e-2a0a-48a5-93a6-086330107c1a)
+
+
+<p>
+To lock and unlock an account you use the same process as resetting, HOWEVER keep in mind this user may have been locked out for a legitimate reason and for this reason make sure you are checking with your leadership/management to verify if they are allowed to have their account unlocked or not.
+</p>
+<br />
+
+<h2>Log Observation</h2>
+
+![image](https://github.com/user-attachments/assets/51412f4d-e551-4fd6-a0fd-4b8e1b820f6a)
+
+<p>
+To open the logs we'll go back to dc-1 vm and simply type event viewer into the start window and open it. From here we just go to Windows Logs > Security then from here you can view the logs and even press control+f to find the specific user we used and look at any logs showing events that pertain to that specific user.
+</p>
+<br />
